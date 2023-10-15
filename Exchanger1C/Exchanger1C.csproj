@@ -126,6 +126,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CommonUtils\BankShorts.cs" />
     <Compile Include="Statements\ExcelTemplate.cs" />
     <Compile Include="Statements\StatementReader.cs" />
     <Compile Include="Statements\Transaction.cs" />

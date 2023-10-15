@@ -1,9 +1,9 @@
 ﻿using ClosedXML.Report;
+using Exchanger1C;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-
+using System.Windows;
 
 namespace Exchanger
 {
@@ -13,10 +13,19 @@ namespace Exchanger
 
         public static XLTemplate fromStatementReader(StatementReader reader)
         {
-            string tmp = Path.GetTempFileName();
+            XLTemplate template;
+            try { template = new XLTemplate("template.xlsx"); }
+            catch
+            {
+                MessageBox.Show($"Ошибка чтения файла-шаблона template.xlsx\nФайл не найден или поврежден",
+                        "Ошибка",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                return null;
+            }
 
-            var template = new XLTemplate("template.xlsx");
-
+            var wrapper = new Wrapper { Transactions = reader.Transactions };
+            template.AddVariable(wrapper);
             template.AddVariable("OwnerName", reader.name);
             template.AddVariable("DateStart", reader.dateStart);
             template.AddVariable("DateEnd", reader.dateEnd);
@@ -27,19 +36,14 @@ namespace Exchanger
             template.AddVariable("OwnerBankKS", reader.bankKS);
             template.AddVariable("BalanceStart", reader.balanceStart.ParseAmount());
             template.AddVariable("BalanceEnd", reader.balanceEnd.ParseAmount());
-
-            var wrapper = new Wrapper();
-            wrapper.Transactions = reader.Transactions;
-
-            template.AddVariable(wrapper);
+            
             template.Generate();
 
             var wb = template.Workbook;
             var sheet = wb.Worksheet("statement");
             sheet.Row(10 + wrapper.Size).Height = 15;
-            sheet.Cell("B2").SetActive(true);
 
-            // set document.xlsx properties
+            // set document.xlsx properties, trying to delete private information
             foreach (var prop in wb.CustomProperties) { prop.Value = null; }
             wb.Author = reader.bankName;
             wb.Properties.Author = reader.bankName;
@@ -53,22 +57,26 @@ namespace Exchanger
             wb.Properties.Company = null;
             wb.Properties.Manager = null;
             wb.Properties.LastModifiedBy = null;
-            wb.CustomProperties.Delete("PrintDate");  // seems to be useless
             sheet.Author = null;
 
             return template;
         }
 
-        public static void WriteFile(XLTemplate template, string fileName) {
+        public static void WriteFile(XLTemplate template, string fileName)
+        {
+            if (template == null || fileName == null) return;
             template.SaveAs(fileName);
             Process.Start(new ProcessStartInfo(fileName) { UseShellExecute = true });
         }
 
-        public static string GenerateFileName(StatementReader reader) {
+        public static string GenerateFileName(StatementReader reader)
+        {
             string firmName = reader.name.ShortenFirmName();
-            string dateStart = reader.dateStart;
-            string dateEnd = reader.dateEnd;
-            return $"{firmName} с {dateStart} по {dateEnd}.xlsx";
+            string bankShortName = BankShorts.findShortName(reader.bankName);
+            string dateStart = " c " + reader.dateStart;
+            string dateEnd = " по " + reader.dateEnd;
+            if (bankShortName.Length > 0) return $"{firmName} {bankShortName} {dateStart}{dateEnd}.xlsx";
+            return $"{firmName}{dateStart}{dateEnd}.xlsx";
         }
 
         public class Wrapper
