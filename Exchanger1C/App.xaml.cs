@@ -39,7 +39,7 @@ namespace Exchanger
                     case FileType.txt1C_to_kl:
                         break;
                     case FileType.kl_to_txt1C:
-                        if (CreateExcelStatement(FileName))
+                        if (CreateExcelStatement(FileName, ForceNotepad: true))
                         {
                             Debug.WriteLine($"APP: Shutdown");
                             this.Shutdown();
@@ -130,18 +130,24 @@ namespace Exchanger
             }
         }
 
-        public static bool CreateExcelStatement(string SourceFileName)
+        public static bool CreateExcelStatement(string SourceFileName, bool ForceNotepad = false)
         {
             Debug.WriteLine($"APP.CreateExcelStatement: reading a statement from {SourceFileName}");
             StatementReader reader = StatementReader.FromFile(SourceFileName);
+
+            if (ForceNotepad) Process.Start("notepad.exe", SourceFileName);
+
             if (reader == null)
             {
-                var res = MessageBox.Show($"Ошибка чтения файла\n{SourceFileName}.\nОткрыть в блокноте?",
+                if (!ForceNotepad)
+                {
+                    var res = MessageBox.Show($"Ошибка чтения файла\n{SourceFileName}.\nОткрыть в блокноте?",
                         "Экспорт выписки в формат Excel",
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Error);
-                if (res == MessageBoxResult.Yes)
-                    Process.Start("notepad.exe", SourceFileName);
+                    if (res == MessageBoxResult.Yes)
+                        Process.Start("notepad.exe", SourceFileName);
+                }
                 return false;
             }
 
@@ -149,7 +155,9 @@ namespace Exchanger
             var template = ExcelTemplate.fromStatementReader(reader);
             if (template == null) return false;
 
-            var outputFilename = SaveExcelDialog(ExcelTemplate.GenerateFileName(reader));
+            string defaultName = ExcelTemplate.GenerateFileName(reader);
+
+            var outputFilename = SaveExcelDialog(defaultName);
             if (outputFilename.Length == 0) return false;
 
             Debug.WriteLine($"APP.CreateExcelStatement: saving xlsx object to {outputFilename}");
@@ -189,8 +197,5 @@ namespace Exchanger
             return Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
         }
 
-        private static bool ChooseOpenStatement() {
-            return true;
-        }
     }
 }

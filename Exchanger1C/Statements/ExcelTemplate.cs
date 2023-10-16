@@ -17,9 +17,11 @@ namespace Exchanger
         public static XLTemplate fromStatementReader(StatementReader reader)
         {
             XLTemplate template;
+
             try
             {
-                template = new XLTemplate(Path.Combine(App.AppPath, "template.xlsx"));
+                string templateFullname = Path.Combine(App.AppPath, "template.xlsx");
+                template = new XLTemplate(templateFullname);
             }
             catch
             {
@@ -30,8 +32,11 @@ namespace Exchanger
                 return null;
             }
 
+
             var wrapper = new Wrapper { Transactions = reader.Transactions };
+
             template.AddVariable(wrapper);
+
             template.AddVariable("OwnerName", reader.name);
             template.AddVariable("DateStart", reader.dateStart);
             template.AddVariable("DateEnd", reader.dateEnd);
@@ -42,8 +47,18 @@ namespace Exchanger
             template.AddVariable("OwnerBankKS", reader.bankKS);
             template.AddVariable("BalanceStart", reader.balanceStart.ParseAmount());
             template.AddVariable("BalanceEnd", reader.balanceEnd.ParseAmount());
-            
-            template.Generate();
+
+            try
+            {
+                template.Generate();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"exception = {ex}",
+                        "ExcelTemplate.fromStatementReader",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+            }
 
             var wb = template.Workbook;
             var sheet = wb.Worksheet("statement");
