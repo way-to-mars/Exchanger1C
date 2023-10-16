@@ -3,7 +3,10 @@ using Exchanger1C;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Windows;
+
 
 namespace Exchanger
 {
@@ -14,7 +17,10 @@ namespace Exchanger
         public static XLTemplate fromStatementReader(StatementReader reader)
         {
             XLTemplate template;
-            try { template = new XLTemplate("template.xlsx"); }
+            try
+            {
+                template = new XLTemplate(Path.Combine(App.AppPath, "template.xlsx"));
+            }
             catch
             {
                 MessageBox.Show($"Ошибка чтения файла-шаблона template.xlsx\nФайл не найден или поврежден",

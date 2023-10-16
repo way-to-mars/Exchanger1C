@@ -4,12 +4,15 @@ using System.Text;
 using System.Windows;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace Exchanger
 {
     public partial class App : Application
     {
         public static string FileName = null;
+
+        public static string AppPath { get { return ExecutablePath(); } }
 
         public enum FileType
         {
@@ -21,21 +24,19 @@ namespace Exchanger
 
         public static FileType checkedType = FileType.none;
 
-        public App()
-        {
-            this.Startup += new StartupEventHandler(App_Startup);
-        }
+        public App() { Startup += new StartupEventHandler(App_Startup); }
 
         void App_Startup(object sender, StartupEventArgs e)
-        {            
+        {
             try
             {
-                Debug.WriteLine($"APP: Checking the type of input file. Args = {String.Join(" ",Environment.GetCommandLineArgs())}");
+                Debug.WriteLine($"APP: Checking the type of input file. Args = {String.Join(" ", Environment.GetCommandLineArgs())}");
                 FileName = GetFirstArgAsFilename();
                 checkedType = CheckInputFileType(FileName);
                 Debug.WriteLine($"APP: type = {checkedType}");
-                switch (checkedType) {
-                    case FileType.txt1C_to_kl:                        
+                switch (checkedType)
+                {
+                    case FileType.txt1C_to_kl:
                         break;
                     case FileType.kl_to_txt1C:
                         if (CreateExcelStatement(FileName))
@@ -129,7 +130,8 @@ namespace Exchanger
             }
         }
 
-        public static bool CreateExcelStatement(string SourceFileName) {
+        public static bool CreateExcelStatement(string SourceFileName)
+        {
             Debug.WriteLine($"APP.CreateExcelStatement: reading a statement from {SourceFileName}");
             StatementReader reader = StatementReader.FromFile(SourceFileName);
             if (reader == null)
@@ -145,6 +147,7 @@ namespace Exchanger
 
             Debug.WriteLine($"APP.CreateExcelStatement: creating xlsx object from reader");
             var template = ExcelTemplate.fromStatementReader(reader);
+            if (template == null) return false;
 
             var outputFilename = SaveExcelDialog(ExcelTemplate.GenerateFileName(reader));
             if (outputFilename.Length == 0) return false;
@@ -156,20 +159,38 @@ namespace Exchanger
 
         private static string SaveExcelDialog(string defaultName = "")
         {
-            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
-
-            saveFileDialog.FileName = defaultName;
-            saveFileDialog.DefaultExt = ".xlsx";
-            saveFileDialog.Filter = "Файл эксель|*.xlsx";
-            saveFileDialog.AddExtension = true;
-            saveFileDialog.Title = "Экспорт выписки в формат Excel";
-            saveFileDialog.OverwritePrompt = true;
-            saveFileDialog.ValidateNames = true;
+            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                FileName = defaultName,
+                DefaultExt = ".xlsx",
+                Filter = "Файл эксель|*.xlsx",
+                AddExtension = true,
+                Title = "Экспорт выписки в формат Excel",
+                OverwritePrompt = true,
+                ValidateNames = true
+            };
 
             Nullable<bool> result = saveFileDialog.ShowDialog();
-            if (result == null || result == false) return "";
+            if (result == null || result == false) return string.Empty;
 
             return saveFileDialog.FileName;
+        }
+
+        private static string ExecutablePath()
+        {
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            try
+            {
+                foreach (Assembly assem in assemblies)
+                    if (assem.GetName().Name == "Exchanger1C")
+                        return Path.GetDirectoryName(assem.Location);
+            }
+            catch (Exception ex) { Debug.WriteLine($"App.ExecutablePath: {ex}"); }
+            return Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
+        }
+
+        private static bool ChooseOpenStatement() {
+            return true;
         }
     }
 }
