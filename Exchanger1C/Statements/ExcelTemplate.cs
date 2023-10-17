@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Windows;
 
 
@@ -14,7 +13,7 @@ namespace Exchanger
     {
         private ExcelTemplate() { }
 
-        public static XLTemplate fromStatementReader(StatementReader reader)
+        public static XLTemplate FromStatementReader(StatementReader reader)
         {
             XLTemplate template;
 
@@ -35,8 +34,7 @@ namespace Exchanger
 
             var wrapper = new Wrapper { Transactions = reader.Transactions };
 
-            template.AddVariable(wrapper);
-
+            if (wrapper.IsNotEmpty) template.AddVariable(wrapper);
             template.AddVariable("OwnerName", reader.name);
             template.AddVariable("DateStart", reader.dateStart);
             template.AddVariable("DateEnd", reader.dateEnd);
@@ -55,7 +53,7 @@ namespace Exchanger
             catch (Exception ex)
             {
                 MessageBox.Show($"exception = {ex}",
-                        "ExcelTemplate.fromStatementReader",
+                        "ExcelTemplate.FromStatementReader",
                         MessageBoxButton.OK,
                         MessageBoxImage.Information);
             }
@@ -63,6 +61,7 @@ namespace Exchanger
             var wb = template.Workbook;
             var sheet = wb.Worksheet("statement");
             sheet.Row(10 + wrapper.Size).Height = 15;
+            if (wrapper.IsEmpty) sheet.Row(10).Delete();    
 
             // set document.xlsx properties, trying to delete private information
             foreach (var prop in wb.CustomProperties) { prop.Value = null; }
@@ -103,6 +102,9 @@ namespace Exchanger
         public class Wrapper
         {
             public int Size { get { return Transactions.Count; } }
+
+            public bool IsEmpty { get { return Size == 0; } }
+            public bool IsNotEmpty { get { return Size > 0; } }
             public List<Transaction> Transactions { get; set; }
         }
 

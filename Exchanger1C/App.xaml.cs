@@ -152,7 +152,7 @@ namespace Exchanger
             }
 
             Debug.WriteLine($"APP.CreateExcelStatement: creating xlsx object from reader");
-            var template = ExcelTemplate.fromStatementReader(reader);
+            var template = ExcelTemplate.FromStatementReader(reader);
             if (template == null) return false;
 
             string defaultName = ExcelTemplate.GenerateFileName(reader);
