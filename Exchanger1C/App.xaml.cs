@@ -59,6 +59,8 @@ namespace Exchanger
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.ToString());
+                Process.Start("notepad.exe", Environment.GetCommandLineArgs()[1]);
+                this.Shutdown();
             }
         }
 
@@ -66,11 +68,9 @@ namespace Exchanger
         {
             if (file == null) return FileType.none;
 
-            if (!File
-                .ReadLines(file, Encoding.GetEncoding("windows-1251"))
-                .First()
-                .StartsWith("1CClientBankExchange")
-                ) return FileType.other_type;
+            var fastLines = File.ReadLines(file, Encoding.GetEncoding("windows-1251"));
+
+            if (fastLines.Count() == 0 || !fastLines.First().StartsWith("1CClientBankExchange")) return FileType.other_type;
 
             // if the File starts with "1CClientBankExchange" check the exactly type of it
             string[] lines = File.ReadAllLines(file, Encoding.GetEncoding("windows-1251"));
