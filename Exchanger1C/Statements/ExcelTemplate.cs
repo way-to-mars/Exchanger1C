@@ -85,8 +85,7 @@ namespace Exchanger
         public static void WriteFile(XLTemplate template, string fileName)
         {
             if (template == null || fileName == null) return;
-            template.SaveAs(fileName);
-            Process.Start(new ProcessStartInfo(fileName) { UseShellExecute = true });
+            template.SaveAs(fileName);            
         }
 
         public static string GenerateFileName(StatementReader reader)
@@ -102,7 +101,6 @@ namespace Exchanger
         public class Wrapper
         {
             public int Size { get { return Transactions.Count; } }
-
             public bool IsEmpty { get { return Size == 0; } }
             public bool IsNotEmpty { get { return Size > 0; } }
             public List<Transaction> Transactions { get; set; }

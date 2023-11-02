@@ -1,0 +1,41 @@
+﻿<Window x:Class="Exchanger1C.Statements.ExcelProgressWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Exchanger1C.Statements"
+        mc:Ignorable="d"
+        Title="ExcelProgressWindow"
+        Height="auto" Width="auto"
+        ShowInTaskbar="False"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        Topmost="True" Opacity="0.95" SizeToContent="WidthAndHeight"
+        ResizeMode="NoResize">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <ProgressBar HorizontalAlignment="Center" Height="10"
+                     x:Name="undefinedProgressBar"
+                     Grid.Row="1"
+                     VerticalAlignment="Center" Width="120"
+                     Margin="50, 20, 50, 10"/>
+        <TextBlock HorizontalAlignment="Center"
+                 x:Name="TxtBlock"
+                 Grid.Row="2"
+                 TextWrapping="Wrap"
+                 Text="TextBox"
+                 VerticalAlignment="Top"
+                 Margin="50, 10, 50, 20"
+                 Width="120"/>
+        <Image HorizontalAlignment="Center"
+               Height="50" 
+               Margin="0,20,0,0"
+               Grid.Row="0"
+               VerticalAlignment="Center" Width="100" Source="/Resources/picturexls.png"/>
+
+    </Grid>
+</Window>

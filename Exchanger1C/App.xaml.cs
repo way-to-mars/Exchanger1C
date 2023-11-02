@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Exchanger1C.Statements;
+using System;
 using System.Diagnostics;
-using System.Text;
-using System.Windows;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace Exchanger
 {
@@ -133,6 +136,11 @@ namespace Exchanger
         public static bool CreateExcelStatement(string SourceFileName, bool ForceNotepad = false)
         {
             Debug.WriteLine($"APP.CreateExcelStatement: reading a statement from {SourceFileName}");
+
+            var progressWindow = new ExcelProgressWindow();
+            progressWindow.UpdateProgress(5, "Чтение исходного файла");
+            progressWindow.Show();
+
             StatementReader reader = StatementReader.FromFile(SourceFileName);
 
             if (ForceNotepad) Process.Start("notepad.exe", SourceFileName);
@@ -148,21 +156,65 @@ namespace Exchanger
                     if (res == MessageBoxResult.Yes)
                         Process.Start("notepad.exe", SourceFileName);
                 }
+                progressWindow.Close();
                 return false;
             }
+            progressWindow.UpdateProgress(25, "Применение шаблона данных");
 
-            Debug.WriteLine($"APP.CreateExcelStatement: creating xlsx object from reader");
-            var template = ExcelTemplate.FromStatementReader(reader);
-            if (template == null) return false;
+            try
+            {
+                Debug.WriteLine($"APP.CreateExcelStatement: creating xlsx object from reader");
+                var template = ExcelTemplate.FromStatementReader(reader);
+                if (template == null) return false;
 
-            string defaultName = ExcelTemplate.GenerateFileName(reader);
+                progressWindow.UpdateProgress(50, "Создание электронной таблицы");
 
-            var outputFilename = SaveExcelDialog(defaultName);
-            if (outputFilename.Length == 0) return false;
+                Int32 unixTimestamp = (Int32)(DateTime.Now.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
 
-            Debug.WriteLine($"APP.CreateExcelStatement: saving xlsx object to {outputFilename}");
-            ExcelTemplate.WriteFile(template, outputFilename);
-            return true;
+                string defaultName = unixTimestamp.ToString("X") + " " + ExcelTemplate.GenerateFileName(reader);
+
+                // var outputFilename = SaveExcelDialog(defaultName);
+                var outputFilename = Path.Combine(Path.GetTempPath(), defaultName);
+                if (outputFilename.Length == 0) return false;
+
+                Debug.WriteLine($"APP.CreateExcelStatement: saving xlsx object to {outputFilename}");
+                ExcelTemplate.WriteFile(template, outputFilename);
+                progressWindow.UpdateProgress(99, "Запуск Excel");
+                Process.Start(new ProcessStartInfo(outputFilename) { UseShellExecute = true });
+                progressWindow.Close();
+
+                DeleteWhenClosed(outputFilename);
+                return true;
+            }
+            catch (Exception)
+            {
+                progressWindow.Close();
+                return false;
+            }            
+        }
+
+        private static void DeleteWhenClosed(string fileName) {
+            Thread.Sleep(10000);
+            while (true) {                
+                if (!File.Exists(fileName)) {
+                    Debug.WriteLine($"File {fileName} doesn't exist anymore");
+                    return;
+                }
+                try
+                {
+                    File.Delete(fileName);
+                }
+                catch (IOException ex) {
+                    Debug.WriteLine($"File {fileName} is busy");
+                    Thread.Sleep(1000);
+                }
+                catch(Exception ex)
+                {
+                    Debug.WriteLine($"Other exception: {ex}");
+                    return;
+                }
+            }
+        
         }
 
         private static string SaveExcelDialog(string defaultName = "")
