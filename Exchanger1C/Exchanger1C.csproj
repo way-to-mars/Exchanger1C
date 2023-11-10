@@ -128,6 +128,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CommonUtils\BankShorts.cs" />
+    <Compile Include="CommonUtils\FileUsageCheck.cs" />
     <Compile Include="Statements\ExcelProgressWindow.xaml.cs">
       <DependentUpon>ExcelProgressWindow.xaml</DependentUpon>
     </Compile>

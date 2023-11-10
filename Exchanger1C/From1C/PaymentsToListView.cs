@@ -5,9 +5,8 @@ namespace Exchanger
 {
     internal class PaymentsToListView
     {
-        private static char[] trimChars = { ' ', '\n' };
-        public string Number
-        {
+        private static readonly char[] trimChars = { ' ', '\n' };
+        public string Number {
             get { return GetOrDefault("Номер", "n/a"); }
             set { _parameters["Номер"] = value; }
         }
@@ -37,19 +36,16 @@ namespace Exchanger
             get { return GetOrDefault("НазначениеПлатежа", "n/a"); }
             set { _parameters["НазначениеПлатежа"] = value; }
         }
-
         public string NativeCode
         {
             get
             {
                 return _stringBuilder.ToString();
             }
-            set { }
         }
 
-        private Dictionary<string, string> _parameters = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> _parameters = new Dictionary<string, string>();
         private StringBuilder _stringBuilder;
-
         public PaymentsToListView() { }
 
         private string GetOrDefault(string key, string defaultValue)
@@ -64,11 +60,7 @@ namespace Exchanger
         {
             string[] line_split = line1c.Trim(trimChars).Split('=');
             string key = line_split[0];
-            string value;
-            if (line_split.Length > 1)
-                value = line_split[1];
-            else
-                value = null;
+            string value = line_split.Length > 1 ? line_split[1] : null;
             _parameters[key] = value;
 
             if (_stringBuilder == null) _stringBuilder = new StringBuilder(line1c.Trim(trimChars));

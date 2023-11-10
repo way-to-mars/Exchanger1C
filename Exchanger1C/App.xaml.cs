@@ -1,12 +1,11 @@
-﻿using Exchanger1C.Statements;
+﻿using Exchanger1C.CommonUtils;
+using Exchanger1C.Statements;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Exchanger
@@ -42,11 +41,9 @@ namespace Exchanger
                     case FileType.txt1C_to_kl:
                         break;
                     case FileType.kl_to_txt1C:
-                        if (CreateExcelStatement(FileName, ForceNotepad: true))
-                        {
-                            Debug.WriteLine($"APP: Shutdown");
-                            this.Shutdown();
-                        }
+                        CreateExcelStatement(FileName, true);                        
+                        Debug.WriteLine($"APP: Shutdown");
+                        this.Shutdown();
                         break;
                     case FileType.other_type:
                         Process.Start("notepad.exe", Environment.GetCommandLineArgs()[1]);
@@ -133,90 +130,14 @@ namespace Exchanger
             }
         }
 
-        public static bool CreateExcelStatement(string SourceFileName, bool ForceNotepad = false)
-        {
-            Debug.WriteLine($"APP.CreateExcelStatement: reading a statement from {SourceFileName}");
+        public static bool CreateExcelStatement(string SourceFileName, bool ForceNotepad = false) {
+            var progressWindow = new ExcelProgressWindow(SourceFileName, ForceNotepad);
+            progressWindow.ShowDialog();
 
-            var progressWindow = new ExcelProgressWindow();
-            progressWindow.UpdateProgress(5, "Чтение исходного файла");
-            progressWindow.Show();
-
-            StatementReader reader = StatementReader.FromFile(SourceFileName);
-
-            if (ForceNotepad) Process.Start("notepad.exe", SourceFileName);
-
-            if (reader == null)
-            {
-                if (!ForceNotepad)
-                {
-                    var res = MessageBox.Show($"Ошибка чтения файла\n{SourceFileName}.\nОткрыть в блокноте?",
-                        "Экспорт выписки в формат Excel",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Error);
-                    if (res == MessageBoxResult.Yes)
-                        Process.Start("notepad.exe", SourceFileName);
-                }
-                progressWindow.Close();
-                return false;
-            }
-            progressWindow.UpdateProgress(25, "Применение шаблона данных");
-
-            try
-            {
-                Debug.WriteLine($"APP.CreateExcelStatement: creating xlsx object from reader");
-                var template = ExcelTemplate.FromStatementReader(reader);
-                if (template == null) return false;
-
-                progressWindow.UpdateProgress(50, "Создание электронной таблицы");
-
-                Int32 unixTimestamp = (Int32)(DateTime.Now.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-
-                string defaultName = unixTimestamp.ToString("X") + " " + ExcelTemplate.GenerateFileName(reader);
-
-                // var outputFilename = SaveExcelDialog(defaultName);
-                var outputFilename = Path.Combine(Path.GetTempPath(), defaultName);
-                if (outputFilename.Length == 0) return false;
-
-                Debug.WriteLine($"APP.CreateExcelStatement: saving xlsx object to {outputFilename}");
-                ExcelTemplate.WriteFile(template, outputFilename);
-                progressWindow.UpdateProgress(99, "Запуск Excel");
-                Process.Start(new ProcessStartInfo(outputFilename) { UseShellExecute = true });
-                progressWindow.Close();
-
-                DeleteWhenClosed(outputFilename);
-                return true;
-            }
-            catch (Exception)
-            {
-                progressWindow.Close();
-                return false;
-            }            
+            return progressWindow.Result;
         }
 
-        private static void DeleteWhenClosed(string fileName) {
-            Thread.Sleep(10000);
-            while (true) {                
-                if (!File.Exists(fileName)) {
-                    Debug.WriteLine($"File {fileName} doesn't exist anymore");
-                    return;
-                }
-                try
-                {
-                    File.Delete(fileName);
-                }
-                catch (IOException ex) {
-                    Debug.WriteLine($"File {fileName} is busy");
-                    Thread.Sleep(1000);
-                }
-                catch(Exception ex)
-                {
-                    Debug.WriteLine($"Other exception: {ex}");
-                    return;
-                }
-            }
-        
-        }
-
+/*
         private static string SaveExcelDialog(string defaultName = "")
         {
             Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog
@@ -235,6 +156,7 @@ namespace Exchanger
 
             return saveFileDialog.FileName;
         }
+*/
 
         private static string ExecutablePath()
         {

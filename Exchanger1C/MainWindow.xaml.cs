@@ -11,7 +11,6 @@ namespace Exchanger
 {
     public partial class MainWindow : Window
     {
-        // private string _fileName = null;
         private Read1c _ptrRead1c = null;
         private enum argState
         {
@@ -29,55 +28,7 @@ namespace Exchanger
         // On_MainWindow_Loaded callback
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine("MainWindow.MainWindow_Loaded: starting event");
-
             if (this.ReadFile(App.FileName)) this.ApplyReader();
-        }
-
-
-        private void OnClickOpenFile(object sender, RoutedEventArgs e)
-        {
-            Debug.WriteLine("MainWindow.OnClickOpenFile: OpenFile button clicked");
-            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
-
-            openFileDialog.DefaultExt = ".txt";
-            openFileDialog.Filter = "Текстовый файл|*.txt";
-
-            Nullable<bool> result = openFileDialog.ShowDialog();
-
-            if (result == true)
-            {
-                string fileName = openFileDialog.FileName;
-                Debug.WriteLine($"MainWindow.OnClickOpenFile: file name from openFileDialog = {fileName}");
-                App.FileType type = App.CheckInputFileType(fileName);
-                Debug.WriteLine($"MainWindow.OnClickOpenFile: checkedType = {type}");
-                switch (type) {
-                    case App.FileType.txt1C_to_kl:
-                        App.FileName = fileName;
-                        App.checkedType = type;
-                        ReadFile(fileName);
-                        this.ApplyReader();
-                        break;
-                    case App.FileType.kl_to_txt1C:
-                        App.CreateExcelStatement(fileName);
-                        break;
-                    case App.FileType.other_type:
-                        var res = MessageBox.Show($"Ошибка чтения файла.\n{fileName}\nОткрыть в блокноте?",
-                        "Чтение файла",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Error);
-                        if (res == MessageBoxResult.Yes)
-                            Process.Start("notepad.exe", fileName);
-                        break;
-                    case App.FileType.none:
-                        Debug.WriteLine("MainWindow.OnClickOpenFile: no action");
-                        break;
-                }
-            }
-            else
-            {
-                Debug.WriteLine("MainWindow.OnClickOpenFile: null result");
-            }
         }
 
         private void OnClickSaveAs(object sender, RoutedEventArgs e)
@@ -255,24 +206,30 @@ namespace Exchanger
             PayerBankBik.Text = read1c.PayerBankBik;
 
             MainList.ItemsSource = read1c.PaymentsList;
-
-            CheckBoxDate.IsChecked = false;
-            CheckBoxNumbers.IsChecked = false;
-            CheckBoxRequisites.IsChecked = false;
-
             NewDatePicker.SelectedDate = DateTime.Now;
+            
             try
             {
                 NewNumerationFrom.Text = read1c.PaymentsList[0].Number;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Debug.Write(ex.ToString());
                 NewNumerationFrom.Text = "1";
             }
             this.Title = "1c_to_kl Редактор [ " + App.FileName + " ]";
-            Debug.WriteLine("MainWindow.ApplyReader: completed");
+            CheckBoxDate.IsChecked = false;
+            CheckBoxNumbers.IsChecked = false;
+            CheckBoxRequisites.IsChecked = false;
         }
+        
+        private void NewDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e) => CheckBoxDate.IsChecked = true;
+        private void NewNumerationFrom_TextChanged(object sender, TextChangedEventArgs e) => CheckBoxNumbers.IsChecked = true;
+        private void PayerAccount_TextChanged(object sender, TextChangedEventArgs e) => CheckBoxRequisites.IsChecked = true;
+        private void PayerBankName_TextChanged(object sender, TextChangedEventArgs e) => CheckBoxRequisites.IsChecked = true;
+        private void PayerBankCity_TextChanged(object sender, TextChangedEventArgs e) => CheckBoxRequisites.IsChecked = true;
+        private void PayerBankKS_TextChanged(object sender, TextChangedEventArgs e) => CheckBoxRequisites.IsChecked = true;
+        private void PayerBankBik_TextChanged(object sender, TextChangedEventArgs e) => CheckBoxRequisites.IsChecked = true;
+        private void OnClickOpenNotePad(object sender, RoutedEventArgs e) => Process.Start("notepad.exe", App.FileName);
 
     }
 }

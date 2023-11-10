@@ -2,7 +2,6 @@
 using Exchanger1C;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Windows;
 
@@ -15,7 +14,7 @@ namespace Exchanger
 
         public static XLTemplate FromStatementReader(StatementReader reader)
         {
-            XLTemplate template;
+            XLTemplate template = null;
 
             try
             {

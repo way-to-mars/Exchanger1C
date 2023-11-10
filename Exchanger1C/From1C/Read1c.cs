@@ -1,8 +1,9 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Text;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
 
 
 namespace Exchanger
@@ -20,46 +21,29 @@ namespace Exchanger
 
         private RubleKop _sum;
         private int _count_payments = 0;
-        private List<PaymentsToListView> _payments = new List<PaymentsToListView>();
+        private readonly List<PaymentsToListView> _payments = new List<PaymentsToListView>();
         private string _payerName;
         private string _payerAccount;
         private string _payerBankName;
         private string _payerBankCity;
         private string _payerBankKS;
         private string _payerBankBik;
-
         private string[] _inputFileLines;
+        private static readonly char[] trimChars = { ' ', '\n' };
 
-
-        public string TotalSum
-        {
-            get
-            {
-                if (_sum != null)
-                    return _sum.ToString();
-                else
-                    return "n/a";
-            }
-        }
-
-        public string TotalCount { get { return _count_payments.ToString(); } }
-
-        public string PayerName { get { return _payerName ?? "n/a"; } }
-
-        public string PayerAccount { get { return _payerAccount ?? "n/a"; } }
-
-        public string PayerBankName { get { return _payerBankName ?? "n/a"; } }
-
-        public string PayerBankCity { get { return _payerBankCity ?? "n/a"; } }
-
-        public string PayerBankKS { get { return _payerBankKS ?? "n/a"; } }
-
-        public string PayerBankBik { get { return _payerBankBik ?? "n/a"; } }
-
-        public List<PaymentsToListView> PaymentsList
-        {
-            get { return _payments; }
-        }
+        public string TotalSum => _sum != null ? _sum.ToString() : "n/a";
+        public string TotalCount => _count_payments.ToString();
+        public string PayerName => _payerName ?? "n/a";
+        public string PayerAccount => _payerAccount ?? "n/a";
+        public string PayerBankName => _payerBankName ?? "n/a";
+        public string PayerBankCity => _payerBankCity ?? "n/a";
+        public string PayerBankKS => _payerBankKS ?? "n/a";
+        public string PayerBankBik => _payerBankBik ?? "n/a";
+        public ReadOnlyCollection<PaymentsToListView> PaymentsList => _payments.AsReadOnly();
+        //public List<PaymentsToListView> PaymentsList
+        //{
+        //    get { return _payments; }
+        //}
 
         private Read1c() { }
 
@@ -87,24 +71,24 @@ namespace Exchanger
                 return null;
             }
 
-            Read1c read1c = new Read1c();
-
-            read1c._inputFileLines = file_lines;
-            read1c._sum = new RubleKop(0, 0);
-            char[] trimChars = { ' ', '\n' };
+            Read1c read1c = new Read1c
+            {
+                _inputFileLines = file_lines,
+                _sum = new RubleKop(0, 0)
+            };
             bool isName = false, isAccount = false, isBankName = false, isBankCity = false, isBankKS = false, isBankBik = false;
             // read Payer info and count sum of all payments
             foreach (string line in file_lines)
             {
 
-                // Counts sums of all the payments
+                // Count sums of all the payments
                 if (line.StartsWith("Сумма="))
                 {
                     read1c._sum += RubleKop.FromString(line.Split('=')[1].Trim(trimChars));
                     read1c._count_payments++;
                 }
 
-                // Gets first entries for Payer
+                // Get first entries for Payer
                 if (!isName && line.StartsWith("Плательщик1="))
                 {
                     read1c._payerName = line.Split('=')[1].Trim(trimChars);

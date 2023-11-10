@@ -6,11 +6,9 @@
         xmlns:local="clr-namespace:Exchanger"
         mc:Ignorable="d"
         Title="1c_to_kl Редактор"
-        Height="500"
-        Width="1000"
-        MinHeight="500"
-        MinWidth="1000"        
-        Icon="logo.png">
+        Icon="logo.png"
+        MaxHeight="550"
+        SizeToContent="Width" ResizeMode="CanMinimize">
     <Grid>
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -19,19 +17,18 @@
             </LinearGradientBrush>
         </Grid.Background>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="50*"
-                              MinWidth="200"
-                              MaxWidth="490"/>
-            <ColumnDefinition Width="50*"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="200*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <ListView
             Grid.Row="0"
             Grid.Column="0"
-            Name="MainList">
+            VirtualizingPanel.ScrollUnit="Pixel"
+            Name="MainList" SelectionMode="Single">
             <ListView.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#FFCACACA" Offset=".894"/>
@@ -177,29 +174,29 @@
                         Margin="10 5 10 5"
                         Grid.Row="1"
                         Grid.Column="1"
-                        LostFocus="OnLostFocusTextBoxCleanDigits"></TextBox>
+                        LostFocus="OnLostFocusTextBoxCleanDigits" TextChanged="PayerAccount_TextChanged"></TextBox>
                     <TextBox
                         Name="PayerBankName"
                         Margin="10 5 10 5"
                         Grid.Row="2"
-                        Grid.Column="1"></TextBox>
+                        Grid.Column="1" TextChanged="PayerBankName_TextChanged"></TextBox>
                     <TextBox
                         Name="PayerBankCity"
                         Margin="10 5 10 5"
                         Grid.Row="3"
-                        Grid.Column="1"></TextBox>
+                        Grid.Column="1" TextChanged="PayerBankCity_TextChanged"></TextBox>
                     <TextBox
                         Name="PayerBankKS"
                         Margin="10 5 10 5"
                         Grid.Row="4"
                         Grid.Column="1"
-                        LostFocus="OnLostFocusTextBoxCleanDigits"></TextBox>
+                        LostFocus="OnLostFocusTextBoxCleanDigits" TextChanged="PayerBankKS_TextChanged"></TextBox>
                     <TextBox
                         Name="PayerBankBik"
                         Margin="10 5 10 5"
                         Grid.Row="5"
                         Grid.Column="1"
-                        LostFocus="OnLostFocusTextBoxCleanDigits"></TextBox>
+                        LostFocus="OnLostFocusTextBoxCleanDigits" TextChanged="PayerBankBik_TextChanged"></TextBox>
                     <CheckBox
                         Name="CheckBoxRequisites"
                         Margin="10 11 10 0"
@@ -214,7 +211,7 @@
                 <TextBlock Margin="5 5 10 5">
                    Задать дату
                 </TextBlock>
-                <DatePicker Margin="0 2 0 0" Name="NewDatePicker"></DatePicker>
+                <DatePicker Margin="0 2 0 0" Name="NewDatePicker" SelectedDateChanged="NewDatePicker_SelectedDateChanged"></DatePicker>
             </StackPanel>
             <StackPanel
                 Orientation="Horizontal"
@@ -226,15 +223,14 @@
                 <TextBox Margin="0 5 0 5"
                          Name="NewNumerationFrom"
                          MinWidth="60"
-                         LostFocus="OnLostFocusTextBoxCleanDigits"></TextBox>
+                         LostFocus="OnLostFocusTextBoxCleanDigits" TextChanged="NewNumerationFrom_TextChanged"></TextBox>
             </StackPanel>
             <Button
                 Name="OpenFileButton"
-                Content="Открыть..."
+                Content="Открыть в блокноте"
                 Margin="5"
                 HorizontalAlignment="Center"
-                Padding="20,5"
-                Click="OnClickOpenFile"
+                Padding="20,5" Click="OnClickOpenNotePad"
                 />
             <Button
                 Name="SaveAsButton"
