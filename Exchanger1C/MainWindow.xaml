@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="1c_to_kl Редактор"
         Icon="logo.png"
-        MaxHeight="550"
+        MaxHeight="530"
         SizeToContent="Width" ResizeMode="CanMinimize">
     <Grid>
         <Grid.Background>
@@ -17,8 +17,8 @@
             </LinearGradientBrush>
         </Grid.Background>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto" MinWidth="300"/>
+            <ColumnDefinition Width="auto" MinWidth="400"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -110,7 +110,6 @@
             </ListView.ItemTemplate>
         </ListView>
 
-
         <StackPanel
             Grid.Row="0"
             Grid.Column="1">
@@ -121,9 +120,8 @@
                 Margin="10 5 10 5">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="35*"
-                                          MaxWidth="120"/>
-                        <ColumnDefinition Width="65*"/>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
@@ -235,13 +233,12 @@
             <Button
                 Name="SaveAsButton"
                 Content="Сохранить как..."
-                Margin="5"
+                Margin="0,8,0,20"
                 HorizontalAlignment="Center"
                 Padding="20,5"
                 Click="OnClickSaveAs"
                 />
         </StackPanel>
-
         
     </Grid>
 </Window>

@@ -87,12 +87,15 @@ namespace Exchanger
 
         public static string GenerateFileName(StatementReader reader)
         {
+            Int32 unixTimestamp = (Int32)(DateTime.Now.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+
             string firmName = reader.name.ShortenFirmName();
             string bankShortName = BankShorts.FindShortName(reader.bankName);
             string dateStart = " c " + reader.dateStart;
             string dateEnd = " по " + reader.dateEnd;
-            if (bankShortName.Length > 0) return $"{firmName} {bankShortName} {dateStart}{dateEnd}.xlsx";
-            return $"{firmName}{dateStart}{dateEnd}.xlsx";
+            // if (bankShortName.Length > 0)
+                return $"{firmName} {bankShortName} {dateStart}{dateEnd} {unixTimestamp.ToString("X")}.xlsx";
+            // return $"{firmName}{dateStart}{dateEnd} {unixTimestamp.ToString("X")}.xlsx";
         }
 
         public class Wrapper

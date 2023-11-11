@@ -1,10 +1,41 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Exchanger1C.CommonUtils
 {
     internal class BankShorts
     {
+        private static Dictionary<string, string> topBanks = new Dictionary<string, string>() {
+            { "СБЕРБАНК", "Сбер" },
+            { "РОССЕЛЬХОЗБАНК", "РСХБ" },
+            { "ВОСТОЧНЫЙ", "Вост" },
+            { "КРОНА-БАНК", "Крона" },
+            { "АЗИАТСКО-ТИХООКЕАНСКИЙ БАНК", "АТБ" },
+            { "ПСБ", "ПСБ"},
+            { "ПРОМСВЯЗЬБАНК", "ПСБ"},
+            { "МЕТАЛЛИНВЕСТБАНК", "МетИнв"},
+            { "ЮНИКРЕДИТ", "ЮниКр"},
+            { "СИТИБАНК", "Сити"},
+            { "ГПБ", "ГПБ"},
+            { "ГАЗПРОМБАНК", "ГПБ"},
+            { "ОТКРЫТИЕ", "Откр"},
+            { "РОСБАНК", "Росбанк"},
+            { "ВТБ", "ВТБ"},
+            { "ЛАНТА-БАНК", "Ланта"},
+            { "УРАЛСИБ", "Урал"},
+            { "СОВКОМБАНК", "СовКом"},
+            { "РАЙФФАЙЗЕНБАНК", "Райф"},
+            { "АКЦЕПТ", "Акцепт"},
+            { "МОДУЛЬБАНК", "Модуль"},
+            { "Точка", "Точка"},
+            { "ЛОКО-БАНК", "Локо"},
+            { "АВАНГАРД", "Авангард"},
+            { "ТИНЬКОФФ", "Тинь"},
+            { "АЛЬФА-БАНК", "Альфа"},
+            { "ЭКСПОБАНК", "Экспо"},
+        };
+
         private static readonly List<string> wordsToExclude = new List<string>() {
             "ПАО", "(ПАО)",
             "ООО", "(ООО)",
@@ -19,6 +50,17 @@ namespace Exchanger1C.CommonUtils
         private static readonly char[] delimiterChars = { ' ', '-' };
 
         public static string FindShortName(string fullname)
+        {
+            if (fullname == null || fullname.Length == 0) return "";
+
+            string upperName = fullname.ToUpper();
+            foreach (KeyValuePair<string, string> bank in topBanks)
+                if (upperName.Contains(bank.Key)) return bank.Value;
+
+            return CreateShortName(fullname);
+        }
+
+        private static string CreateShortName(string fullname)
         {
             if (fullname == null || fullname.Length == 0) return "";
 

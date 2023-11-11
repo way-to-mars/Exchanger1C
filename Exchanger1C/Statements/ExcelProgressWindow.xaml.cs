@@ -60,11 +60,12 @@ namespace Exchanger1C.Statements
                     return;
                 }
 
-                Int32 unixTimestamp = (Int32)(DateTime.Now.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-                string defaultName = unixTimestamp.ToString("X") + " " + ExcelTemplate.GenerateFileName(reader);
-
-                var outputFilename = Path.Combine(Path.GetTempPath(), defaultName);
-                if (outputFilename.Length == 0) return;
+                string outputFilename = Path.Combine(Path.GetTempPath(), ExcelTemplate.GenerateFileName(reader));
+                if (outputFilename.Length == 0)
+                {
+                    await ClosingScenario($"Пустая строка в имени файла %outputFilename%");
+                    return;
+                }
 
                 await UpdateProgress(50, "Сохранение таблицы в файл");
 
