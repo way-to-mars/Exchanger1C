@@ -40,10 +40,6 @@ namespace Exchanger
         public string PayerBankKS => _payerBankKS ?? "n/a";
         public string PayerBankBik => _payerBankBik ?? "n/a";
         public ReadOnlyCollection<PaymentsToListView> PaymentsList => _payments.AsReadOnly();
-        //public List<PaymentsToListView> PaymentsList
-        //{
-        //    get { return _payments; }
-        //}
 
         private Read1c() { }
 
@@ -80,45 +76,47 @@ namespace Exchanger
             // read Payer info and count sum of all payments
             foreach (string line in file_lines)
             {
-
-                // Count sums of all the payments
                 if (line.StartsWith("Сумма="))
                 {
                     read1c._sum += RubleKop.FromString(line.Split('=')[1].Trim(trimChars));
                     read1c._count_payments++;
                 }
 
-                // Get first entries for Payer
                 if (!isName && line.StartsWith("Плательщик1="))
                 {
                     read1c._payerName = line.Split('=')[1].Trim(trimChars);
                     isName = true;
                     continue;
                 }
+
                 if (!isAccount && line.StartsWith("ПлательщикРасчСчет="))
                 {
                     read1c._payerAccount = line.Split('=')[1].Trim(trimChars);
                     isAccount = true;
                     continue;
                 }
+
                 if (!isBankName && line.StartsWith("ПлательщикБанк1="))
                 {
                     read1c._payerBankName = line.Split('=')[1].Trim(trimChars);
                     isBankName = true;
                     continue;
                 }
+
                 if (!isBankCity && line.StartsWith("ПлательщикБанк2="))
                 {
                     read1c._payerBankCity = line.Split('=')[1].Trim(trimChars);
                     isBankCity = true;
                     continue;
                 }
+
                 if (!isBankKS && line.StartsWith("ПлательщикКорсчет="))
                 {
                     read1c._payerBankKS = line.Split('=')[1].Trim(trimChars);
                     isBankKS = true;
                     continue;
                 }
+
                 if (!isBankBik && line.StartsWith("ПлательщикБИК="))
                 {
                     read1c._payerBankBik = line.Split('=')[1].Trim(trimChars);
@@ -282,5 +280,4 @@ namespace Exchanger
             return result;
         }
     }
-
 }

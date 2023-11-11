@@ -1,5 +1,4 @@
-﻿using Exchanger1C.CommonUtils;
-using Exchanger1C.Statements;
+﻿using Exchanger1C.Statements;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -72,7 +71,7 @@ namespace Exchanger
 
             if (fastLines.Count() == 0 || !fastLines.First().StartsWith("1CClientBankExchange")) return FileType.other_type;
 
-            // if the File starts with "1CClientBankExchange" check the exactly type of it
+            // if the File starts with "1CClientBankExchange" check the exact type of it
             string[] lines = File.ReadAllLines(file, Encoding.GetEncoding("windows-1251"));
             foreach (string line in lines)
             {
@@ -137,27 +136,6 @@ namespace Exchanger
             return progressWindow.Result;
         }
 
-/*
-        private static string SaveExcelDialog(string defaultName = "")
-        {
-            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog
-            {
-                FileName = defaultName,
-                DefaultExt = ".xlsx",
-                Filter = "Файл эксель|*.xlsx",
-                AddExtension = true,
-                Title = "Экспорт выписки в формат Excel",
-                OverwritePrompt = true,
-                ValidateNames = true
-            };
-
-            Nullable<bool> result = saveFileDialog.ShowDialog();
-            if (result == null || result == false) return string.Empty;
-
-            return saveFileDialog.FileName;
-        }
-*/
-
         private static string ExecutablePath()
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
@@ -170,6 +148,5 @@ namespace Exchanger
             catch (Exception ex) { Debug.WriteLine($"App.ExecutablePath: {ex}"); }
             return Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
         }
-
     }
 }

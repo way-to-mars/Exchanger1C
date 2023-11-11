@@ -33,13 +33,17 @@ namespace Exchanger1C.CommonUtils
         }
 
         public static async Task UntilBusyAsync(string vFileName) {
+            int tick = 100;
+            int timeLimit = 30_000;
+
             if (CheckState(vFileName) != State.NONE)
             {
                 do
                 {
                     Debug.WriteLine("WaitUntilBusy");
-                    await Task.Delay(100);
-                } while (CheckState(vFileName) == State.FREE);
+                    await Task.Delay(tick);
+                    timeLimit -= tick;
+                } while (CheckState(vFileName) == State.FREE && timeLimit > 0);
             }
         }
 

@@ -1,5 +1,5 @@
 ﻿using ClosedXML.Report;
-using Exchanger1C;
+using Exchanger1C.CommonUtils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,8 +14,7 @@ namespace Exchanger
 
         public static XLTemplate FromStatementReader(StatementReader reader)
         {
-            XLTemplate template = null;
-
+            XLTemplate template;
             try
             {
                 string templateFullname = Path.Combine(App.AppPath, "template.xlsx");
@@ -29,7 +28,6 @@ namespace Exchanger
                         MessageBoxImage.Error);
                 return null;
             }
-
 
             var wrapper = new Wrapper { Transactions = reader.Transactions };
 

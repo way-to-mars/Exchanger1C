@@ -21,11 +21,9 @@ namespace Exchanger
         public MainWindow()
         {
             InitializeComponent();
-
-            this.Loaded += MainWindow_Loaded;  // register an event callback
+            this.Loaded += MainWindow_Loaded;
         }
 
-        // On_MainWindow_Loaded callback
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             if (this.ReadFile(App.FileName)) this.ApplyReader();
@@ -38,27 +36,19 @@ namespace Exchanger
             Read1c read1C = this._ptrRead1c;
             if (read1C == null) return;
 
-            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
-            // Default file name
-            dlg.FileName = read1C.PayerName.Replace("\"", string.Empty) + " " +
-                DateTime.Now.ToString().Replace(":", "-") +
-                ".txt";
-            dlg.DefaultExt = ".txt";
-            dlg.Filter = "Текстовый файл|*.txt";
-
-            // Show save file dialog box
-            Nullable<bool> result = dlg.ShowDialog();
-
-            // Process save file dialog box results
-            if (result == true)
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog
             {
-                // Save document
-                string filename = dlg.FileName;
-                SaveToFile(filename);
-            }
+                FileName = read1C.PayerName.Replace("\"", string.Empty) + " " +
+                DateTime.Now.ToString().Replace(":", "-") +
+                ".txt",
+                DefaultExt = ".txt",
+                Filter = "Текстовый файл|*.txt"
+            };
+
+            if (dlg.ShowDialog() == true) SaveToFile(dlg.FileName);
         }
 
-        // removes all characters except digits = {0, 1, 2 - 9}
+        // removes all characters except digits = {0 .. 9}
         private void OnLostFocusTextBoxCleanDigits(object sender, RoutedEventArgs e)
         {
             TextBox tb = e.Source as TextBox;
@@ -210,7 +200,6 @@ namespace Exchanger
             
             try
             {
-                // NewNumerationFrom.Text = read1c.PaymentsList[0].Number;
                 NewNumerationFrom.Text = read1c.PaymentsList.Min(x => x.Number);
             }
             catch (Exception)

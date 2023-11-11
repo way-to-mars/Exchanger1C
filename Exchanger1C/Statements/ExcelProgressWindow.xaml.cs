@@ -63,7 +63,6 @@ namespace Exchanger1C.Statements
                 Int32 unixTimestamp = (Int32)(DateTime.Now.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
                 string defaultName = unixTimestamp.ToString("X") + " " + ExcelTemplate.GenerateFileName(reader);
 
-                // var outputFilename = SaveExcelDialog(defaultName);
                 var outputFilename = Path.Combine(Path.GetTempPath(), defaultName);
                 if (outputFilename.Length == 0) return;
 

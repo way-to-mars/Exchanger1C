@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Exchanger1C
+namespace Exchanger1C.CommonUtils
 {
     internal class BankShorts
     {
-        private static List<string> WordsToExclude = new List<string>() {
+        private static readonly List<string> wordsToExclude = new List<string>() {
             "ПАО", "(ПАО)",
             "ООО", "(ООО)",
             "ОАО", "(ОАО)",
@@ -17,7 +16,7 @@ namespace Exchanger1C
             "РНКО", "НКО",
         };
 
-        private static char[] delimiterChars = { ' ', '-' };
+        private static readonly char[] delimiterChars = { ' ', '-' };
 
         public static string FindShortName(string fullname)
         {
@@ -45,13 +44,13 @@ namespace Exchanger1C
             return input.Substring(firstIndex + 1, newLength);
         }
                
-        private static string TryInitials(string input)  // transform to abbreviation if it has 3 or more words
+        private static string TryInitials(string input)  // transform to abbreviation if input has 3 or more words
         {
             string[] words = input.Split(delimiterChars);
 
             if (words.Length < 3) return input;
 
-            return string.Join("", words.Select(word => char.ToUpper(word[0])));
+            return string.Concat(words.Select(word => char.ToUpper(word[0])));
         }
 
         private static string FilterSymbols(string input) => input.Replace("(", "").Replace(")", "").Replace("\"", "");
@@ -60,7 +59,7 @@ namespace Exchanger1C
         {
             string upperInput = input.ToUpper();
 
-            foreach (var word in WordsToExclude)
+            foreach (var word in wordsToExclude)
             {
                 if (word.ToUpper() == upperInput) return false;
             }

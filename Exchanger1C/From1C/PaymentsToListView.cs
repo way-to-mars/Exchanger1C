@@ -69,7 +69,6 @@ namespace Exchanger
                 _stringBuilder.Append("\n");
                 _stringBuilder.Append(line1c.Trim(trimChars));
             }
-
         }
     }
 }
