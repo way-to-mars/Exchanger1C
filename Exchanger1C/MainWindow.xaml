@@ -174,7 +174,7 @@
                         Margin="10 5 10 5"
                         Grid.Row="1"
                         Grid.Column="1"
-                        LostFocus="OnLostFocusTextBoxCleanDigits" TextChanged="PayerAccount_TextChanged"></TextBox>
+                        LostFocus="OnLostFocusTextBoxCleanDigits" TextChanged="PayerAccount_TextChanged" InputScope="Digits"></TextBox>
                     <TextBox
                         Name="PayerBankName"
                         Margin="10 5 10 5"
@@ -190,13 +190,13 @@
                         Margin="10 5 10 5"
                         Grid.Row="4"
                         Grid.Column="1"
-                        LostFocus="OnLostFocusTextBoxCleanDigits" TextChanged="PayerBankKS_TextChanged"></TextBox>
+                        LostFocus="OnLostFocusTextBoxCleanDigits" TextChanged="PayerBankKS_TextChanged" ForceCursor="True" InputScope="Digits"></TextBox>
                     <TextBox
                         Name="PayerBankBik"
                         Margin="10 5 10 5"
                         Grid.Row="5"
                         Grid.Column="1"
-                        LostFocus="OnLostFocusTextBoxCleanDigits" TextChanged="PayerBankBik_TextChanged"></TextBox>
+                        LostFocus="OnLostFocusTextBoxCleanDigits" TextChanged="PayerBankBik_TextChanged" InputScope="Digits"></TextBox>
                     <CheckBox
                         Name="CheckBoxRequisites"
                         Margin="10 11 10 0"

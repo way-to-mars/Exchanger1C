@@ -90,7 +90,7 @@ namespace Exchanger
         public static string GenerateFileName(StatementReader reader)
         {
             string firmName = reader.name.ShortenFirmName();
-            string bankShortName = BankShorts.findShortName(reader.bankName);
+            string bankShortName = BankShorts.FindShortName(reader.bankName);
             string dateStart = " c " + reader.dateStart;
             string dateEnd = " по " + reader.dateEnd;
             if (bankShortName.Length > 0) return $"{firmName} {bankShortName} {dateStart}{dateEnd}.xlsx";

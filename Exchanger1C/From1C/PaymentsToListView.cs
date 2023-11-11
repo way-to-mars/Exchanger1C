@@ -28,8 +28,8 @@ namespace Exchanger
         }
         public string Name
         {
-            get { return GetOrDefault("Плательщик1", "n/a"); }
-            set { _parameters["Плательщик1"] = value; }
+            get { return GetOrDefault("Получатель1", "n/a"); }
+            set { _parameters["Получатель1"] = value; }
         }
         public string Description
         {

@@ -210,7 +210,8 @@ namespace Exchanger
             
             try
             {
-                NewNumerationFrom.Text = read1c.PaymentsList[0].Number;
+                // NewNumerationFrom.Text = read1c.PaymentsList[0].Number;
+                NewNumerationFrom.Text = read1c.PaymentsList.Min(x => x.Number);
             }
             catch (Exception)
             {
