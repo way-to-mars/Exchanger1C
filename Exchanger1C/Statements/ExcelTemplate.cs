@@ -29,7 +29,7 @@ namespace Exchanger
                 return null;
             }
 
-            var wrapper = new Wrapper { Transactions = reader.Transactions };
+            var wrapper = new Wrapper(reader.Transactions);
 
             if (wrapper.IsNotEmpty) template.AddVariable(wrapper);
             template.AddVariable("OwnerName", reader.name);
@@ -87,23 +87,24 @@ namespace Exchanger
 
         public static string GenerateFileName(StatementReader reader)
         {
-            Int32 unixTimestamp = (Int32)(DateTime.Now.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+            string BasicName() {
+                string firmName = reader.name.ShortenFirmName();
+                string bankShortName = BankShorts.FindShortName(reader.bankName);
 
-            string firmName = reader.name.ShortenFirmName();
-            string bankShortName = BankShorts.FindShortName(reader.bankName);
-            string dateStart = " c " + reader.dateStart;
-            string dateEnd = " по " + reader.dateEnd;
-            // if (bankShortName.Length > 0)
-                return $"{firmName} {bankShortName} {dateStart}{dateEnd} {unixTimestamp.ToString("X")}.xlsx";
-            // return $"{firmName}{dateStart}{dateEnd} {unixTimestamp.ToString("X")}.xlsx";
+                if (reader.dateStart == reader.dateEnd) return $"{firmName}({bankShortName}) {reader.dateStart}";
+                return $"{firmName}({bankShortName}) с {reader.dateStart} по {reader.dateEnd}";
+            }
+
+            return $"{BasicName()}.xlsx";          
         }
 
         public class Wrapper
         {
-            public int Size { get { return Transactions.Count; } }
-            public bool IsEmpty { get { return Size == 0; } }
-            public bool IsNotEmpty { get { return Size > 0; } }
-            public List<Transaction> Transactions { get; set; }
+            public int Size => Transactions.Count;
+            public bool IsEmpty => Size == 0;
+            public bool IsNotEmpty => Size > 0;
+            public List<Transaction> Transactions { get; }
+            public Wrapper(List<Transaction> transactions) => Transactions = transactions;
         }
 
     }

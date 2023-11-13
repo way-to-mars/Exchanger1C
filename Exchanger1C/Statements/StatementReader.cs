@@ -64,13 +64,13 @@ namespace Exchanger
 
             // read _transactions
             TransactionRaw transaction = new TransactionRaw();  // for null-safety purposes
-            bool isInTransaction = false;
+            bool insideTransaction = false;
             foreach (string line in file_lines)
             {
                 if (line.StartsWith("СекцияДокумент="))
                 {
                     transaction = new TransactionRaw();
-                    isInTransaction = true;
+                    insideTransaction = true;
                     transaction.AddLine(line);
                     continue;
                 }
@@ -78,10 +78,10 @@ namespace Exchanger
                 {
                     transaction.AddLine(line);
                     reader._transactions.Add(transaction);
-                    isInTransaction = false;
+                    insideTransaction = false;
                     continue;
                 }
-                if (isInTransaction)
+                if (insideTransaction)
                 {
                     transaction.AddLine(line);
                 }

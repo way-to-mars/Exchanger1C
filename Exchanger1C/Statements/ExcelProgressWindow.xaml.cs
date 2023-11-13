@@ -1,4 +1,5 @@
 ﻿using Exchanger;
+using Exchanger1C.CommonUtils;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -61,13 +62,12 @@ namespace Exchanger1C.Statements
                 }
 
                 string outputFilename = Path.Combine(Path.GetTempPath(), ExcelTemplate.GenerateFileName(reader));
-                if (outputFilename.Length == 0)
-                {
-                    await ClosingScenario($"Пустая строка в имени файла %outputFilename%");
-                    return;
-                }
-
                 await UpdateProgress(50, "Сохранение таблицы в файл");
+
+                while (FileUsageCheck.CheckState(outputFilename) != State.NONE) {
+                    Int32 unixTimestamp = (Int32)(DateTime.Now.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+                    outputFilename = $"{outputFilename.Substring(0, outputFilename.Length - 5)} {unixTimestamp:X}.xlsx";
+                }
 
                 ExcelTemplate.WriteFile(template, outputFilename);
                 await UpdateProgress(99, "Открываем файл эксель");
