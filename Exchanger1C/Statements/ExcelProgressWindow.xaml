@@ -10,29 +10,32 @@
         ShowInTaskbar="False"
         WindowStyle="None"
         WindowStartupLocation="CenterScreen"
+        Background="White"
         Topmost="True" Opacity="0.95" SizeToContent="WidthAndHeight"
-        ResizeMode="NoResize" Loaded="Window_Loaded">
-    <Grid Margin="30,10,30,10">
+        ResizeMode="NoResize" Loaded="Window_Loaded" AllowsTransparency="True">
+    <Border BorderThickness="4" BorderBrush="#FF099F25">
+        <Border BorderThickness="1" BorderBrush="#FF099F25" Margin="2">
+        <Grid Margin="30,10,30,10">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-        </Grid.RowDefinitions>
-        <Image HorizontalAlignment="Center"                
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Image HorizontalAlignment="Center"                
                Grid.Row="0"
                VerticalAlignment="Center"
                Height="50"
                Width="100"
                Margin="0, 10, 0, 10"
                Source="/Resources/picturexls.png"/>
-        <ProgressBar HorizontalAlignment="Center" Height="10"
+            <ProgressBar HorizontalAlignment="Center" Height="10"
                      x:Name="UndefinedProgressBar"
                      Grid.Row="1"
                      VerticalAlignment="Center" Width="120"
                      Margin="0, 10, 0, 10"/>
-        <TextBlock HorizontalAlignment="Center"
+            <TextBlock HorizontalAlignment="Center"
                  TextAlignment="Center"
                  x:Name="TxtBlock"
                  Grid.Row="2"
@@ -41,7 +44,7 @@
                  VerticalAlignment="Top"
                  Margin="0, 10, 0, 10"
                  Width="160"/>
-        <Button HorizontalAlignment="Center"
+            <Button HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 x:Name="ClsBtn"
                 Grid.Row="3"
@@ -50,5 +53,7 @@
                 Padding="15,5,15,5"
                 Margin="0, 10, 0, 10" Click="ClsBtn_Click"/>
 
-    </Grid>
+        </Grid>
+        </Border>
+    </Border>
 </Window>
