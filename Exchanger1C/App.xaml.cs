@@ -1,5 +1,6 @@
 ﻿using Exchanger1C.Statements;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -65,11 +66,20 @@ namespace Exchanger
 
         public static FileType CheckInputFileType(string file)
         {
-            if (file == null) return FileType.none;
+            if (file is null) return FileType.none;
 
-            var fastLines = File.ReadLines(file, Encoding.GetEncoding("windows-1251"));
+            IEnumerable<string> fastLines;
+            try
+            {
+                fastLines = File.ReadLines(file, Encoding.GetEncoding("windows-1251"));
+            }
+            catch
+            {
+                return FileType.none;
+            }
 
-            if (fastLines.Count() == 0 || !fastLines.First().StartsWith("1CClientBankExchange")) return FileType.other_type;
+            if (fastLines.Count() == 0 || !fastLines.First().StartsWith("1CClientBankExchange"))
+                return FileType.other_type;
 
             // if the File starts with "1CClientBankExchange" check the exact type of it
             string[] lines = File.ReadAllLines(file, Encoding.GetEncoding("windows-1251"));
@@ -82,7 +92,7 @@ namespace Exchanger
                 }
             }
 
-            return FileType.other_type;
+            return FileType.kl_to_txt1C;
         }
 
         private string GetFirstArgAsFilename()
@@ -91,10 +101,10 @@ namespace Exchanger
             if (args != null && args.Length > 1)
             {
                 Debug.WriteLine($"Found an argument {args[1]}");
-                System.IO.FileInfo fi = null;
+                FileInfo fi;
                 try
                 {
-                    fi = new System.IO.FileInfo(args[1]);
+                    fi = new FileInfo(args[1]);
                 }
                 catch (ArgumentException)
                 {
@@ -111,7 +121,7 @@ namespace Exchanger
                     Debug.WriteLine("NotSupportedException exception");
                     return null;
                 }
-                if (ReferenceEquals(fi, null))
+                if (fi is null)
                 {
                     Debug.WriteLine("File name is not valid");
                     return null;
