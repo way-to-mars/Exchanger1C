@@ -38,7 +38,7 @@ namespace Exchanger
                 },
             };
 
-            return this.Rubles.ToString("#,#", culture) + _output_delimiter.ToString() + this.Kopeyki.ToString("00");
+            return Rubles.ToString() + _output_delimiter.ToString() + Kopeyki.ToString("00");
         }
 
         public static RubleKop FromString(string str)
